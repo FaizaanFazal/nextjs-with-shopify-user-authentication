@@ -1,155 +1,194 @@
-import useFetch from "@/components/hooks/useFetch";
-import isShopAvailable from "@/utils/middleware/isShopAvailable";
-import {
-  Button,
-  Card,
-  InlineStack,
-  Layout,
-  Page,
-  Text,
-  BlockStack,
-} from "@shopify/polaris";
-import { ExternalMinor } from "@shopify/polaris-icons";
-import { useRouter } from "next/router";
+import * as React from 'react';
 
-//On first install, check if the store is installed and redirect accordingly.
-//DO NOT REMOVE.
-export async function getServerSideProps(context) {
-  return await isShopAvailable(context);
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+
+import Navigation from '../components/Navigation';
+import ProductsList from '../components/ProductsList';
+import { shopifyClient, parseShopifyResponse } from '../lib/shopify'
+
+export default function Index({ products }) {
+  return (
+    <Box>
+      <Navigation />
+      <Container maxWidth="lg">
+        <ProductsList products={products} />
+      </Container>
+    </Box>
+  );
 }
 
-const HomePage = () => {
-  const router = useRouter();
-  const fetch = useFetch();
+export const getServerSideProps = async () => {
+  // Fetch all the products
+  const products = await shopifyClient.product.fetchAll();
 
-  return (
-    <>
-      <Page title="Home">
-        <Layout>
-          <Layout.Section variant="fullWidth">
-            <Card>
-              <BlockStack gap="200">
-                <Text as="h2" variant="headingMd">
-                  Debug Cards
-                </Text>
-                <Text>
-                  Explore how the repository handles data fetching from the
-                  backend, App Proxy, making GraphQL requests, Billing API and
-                  more.
-                </Text>
-                <InlineStack wrap={false} align="end">
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      router.push("/debug");
-                    }}
-                  >
-                    Debug Cards
-                  </Button>
-                </InlineStack>
-              </BlockStack>
-            </Card>
-          </Layout.Section>
-          <Layout.Section variant="oneHalf">
-            <Card>
-              <BlockStack gap="200">
-                <Text as="h2" variant="headingMd">
-                  App Bridge CDN
-                </Text>
-                <Text>
-                  App Bridge has changed. Read more about it in the docs
-                </Text>
-                <InlineStack wrap={false} align="end">
-                  <Button
-                    variant="primary"
-                    external
-                    icon={ExternalMinor}
-                    onClick={() => {
-                      open(
-                        "https://shopify.dev/docs/api/app-bridge-library/reference",
-                        "_blank"
-                      );
-                    }}
-                  >
-                    Explore
-                  </Button>
-                </InlineStack>
-              </BlockStack>
-            </Card>
-          </Layout.Section>
-          <Layout.Section variant="oneHalf">
-            <Card>
-              <BlockStack gap="200">
-                <Text as="h2" variant="headingMd">
-                  Repository
-                </Text>
-                <Text>
-                  Found a bug? Open an issue on the repository, or star on
-                  GitHub
-                </Text>
-                <InlineStack wrap={false} align="end" gap="200">
-                  <Button
-                    external
-                    icon={ExternalMinor}
-                    onClick={() => {
-                      open(
-                        "https://github.com/kinngh/shopify-nextjs-prisma-app/issues?q=is%3Aissue",
-                        "_blank"
-                      );
-                    }}
-                  >
-                    Issues
-                  </Button>
-                  <Button
-                    external
-                    variant="primary"
-                    icon={ExternalMinor}
-                    onClick={() => {
-                      open(
-                        "https://github.com/kinngh/shopify-nextjs-prisma-app",
-                        "_blank"
-                      );
-                    }}
-                  >
-                    Star
-                  </Button>
-                </InlineStack>
-              </BlockStack>
-            </Card>
-          </Layout.Section>
-          <Layout.Section variant="oneHalf">
-            <Card>
-              <BlockStack gap="200">
-                <Text as="h2" variant="headingMd">
-                  Course
-                </Text>
-                <Text>
-                  [BETA] I'm building course as a live service on How To Build
-                  Shopify Apps
-                </Text>
-                <InlineStack wrap={false} align="end">
-                  <Button
-                    external
-                    variant="primary"
-                    icon={ExternalMinor}
-                    onClick={() => {
-                      open(
-                        "https://kinngh.gumroad.com/l/how-to-make-shopify-apps?utm_source=boilerplate&utm_medium=nextjs",
-                        "_blank"
-                      );
-                    }}
-                  >
-                    Buy
-                  </Button>
-                </InlineStack>
-              </BlockStack>
-            </Card>
-          </Layout.Section>
-          <Layout.Section variant="oneHalf" />
-        </Layout>
-      </Page>
-    </>
-  );
+  return {
+    props: {
+      products: parseShopifyResponse(products),
+    },
+  };
 };
 
-export default HomePage;
+
+
+// import useFetch from "@/components/hooks/useFetch";
+// import isShopAvailable from "@/utils/middleware/isShopAvailable";
+// import {
+//   Button,
+//   Card,
+//   InlineStack,
+//   Layout,
+//   Page,
+//   Text,
+//   BlockStack,
+// } from "@shopify/polaris";
+// import { ExternalMinor } from "@shopify/polaris-icons";
+// import { useRouter } from "next/router";
+// // import isShopAvailable from "@/utils/middleware/isShopAvailable"
+// // import { useAppBridge} from "@shopify/app-bridge-react";
+// // import { Redirect} from "@shopify/app-bridge/actions";
+// // // import { Layout, LegacyCard, Page } from "@shopify/polaris";
+// // import { useRouter} from "next/router";
+
+// //On first install, check if the store is installed and redirect accordingly.
+// //DO NOT REMOVE.
+// export async function getServerSideProps(context) {
+//   return await isShopAvailable(context);
+// }
+
+// const HomePage = () => {
+//   const router = useRouter();
+//   const fetch = useFetch();
+//   const redirect = Redirect.create(app)
+
+//   return (
+//     <>
+//       <Page title="Home">
+//         <Layout>
+//           <Layout.Section variant="fullWidth">
+//             <Card>
+//               <BlockStack gap="200">
+//                 <Text as="h2" variant="headingMd">
+//                   Debug Cards
+//                 </Text>
+//                 <Text>
+//                   Explore how the repository handles data fetching from the
+//                   backend, App Proxy, making GraphQL requests, Billing API and
+//                   more.
+//                 </Text>
+//                 <InlineStack wrap={false} align="end">
+//                   <Button
+//                     variant="primary"
+//                     onClick={() => {
+//                       router.push("/debug");
+//                     }}
+//                   >
+//                     Debug Cards
+//                   </Button>
+//                 </InlineStack>
+//               </BlockStack>
+//             </Card>
+//           </Layout.Section>
+//           <Layout.Section variant="oneHalf">
+//             <Card>
+//               <BlockStack gap="200">
+//                 <Text as="h2" variant="headingMd">
+//                   App Bridge CDN
+//                 </Text>
+//                 <Text>
+//                   App Bridge has changed. Read more about it in the docs
+//                 </Text>
+//                 <InlineStack wrap={false} align="end">
+//                   <Button
+//                     variant="primary"
+//                     external
+//                     icon={ExternalMinor}
+//                     onClick={() => {
+//                       open(
+//                         "https://shopify.dev/docs/api/app-bridge-library/reference",
+//                         "_blank"
+//                       );
+//                     }}
+//                   >
+//                     Explore
+//                   </Button>
+//                 </InlineStack>
+//               </BlockStack>
+//             </Card>
+//           </Layout.Section>
+//           <Layout.Section variant="oneHalf">
+//             <Card>
+//               <BlockStack gap="200">
+//                 <Text as="h2" variant="headingMd">
+//                   Repository
+//                 </Text>
+//                 <Text>
+//                   Found a bug? Open an issue on the repository, or star on
+//                   GitHub
+//                 </Text>
+//                 <InlineStack wrap={false} align="end" gap="200">
+//                   <Button
+//                     external
+//                     icon={ExternalMinor}
+//                     onClick={() => {
+//                       open(
+//                         "https://github.com/kinngh/shopify-nextjs-prisma-app/issues?q=is%3Aissue",
+//                         "_blank"
+//                       );
+//                     }}
+//                   >
+//                     Issues
+//                   </Button>
+//                   <Button
+//                     external
+//                     variant="primary"
+//                     icon={ExternalMinor}
+//                     onClick={() => {
+//                       open(
+//                         "https://github.com/kinngh/shopify-nextjs-prisma-app",
+//                         "_blank"
+//                       );
+//                     }}
+//                   >
+//                     Star
+//                   </Button>
+//                 </InlineStack>
+//               </BlockStack>
+//             </Card>
+//           </Layout.Section>
+//           <Layout.Section variant="oneHalf">
+//             <Card>
+//               <BlockStack gap="200">
+//                 <Text as="h2" variant="headingMd">
+//                   Course
+//                 </Text>
+//                 <Text>
+//                   [BETA] I'm building course as a live service on How To Build
+//                   Shopify Apps
+//                 </Text>
+//                 <InlineStack wrap={false} align="end">
+//                   <Button
+//                     external
+//                     variant="primary"
+//                     icon={ExternalMinor}
+//                     onClick={() => {
+//                       open(
+//                         "https://kinngh.gumroad.com/l/how-to-make-shopify-apps?utm_source=boilerplate&utm_medium=nextjs",
+//                         "_blank"
+//                       );
+//                     }}
+//                   >
+//                     Buy
+//                   </Button>
+//                 </InlineStack>
+//               </BlockStack>
+//             </Card>
+//           </Layout.Section>
+//           <Layout.Section variant="oneHalf" />
+//         </Layout>
+//       </Page>
+//     </>
+//   );
+// };
+
+// export default HomePage;
